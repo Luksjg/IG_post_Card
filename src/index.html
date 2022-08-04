@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css"/>
+
+    <title>Instagram post card</title>
+</head>
+<body>
+    <div class="card">
+        <div class="top">
+            <div class="userDetails">
+                <div class="profile_img">
+                    <img src="img/cvpic.jpg" alt="profile_pic" class="cover">
+                </div>
+                <h3>
+                    lucasjgomez<br/>
+                    <span>Buenos aires, Argentina</span>
+                </h3>
+            </div>
+            <div>
+                <img src="img/dot.png" class="dot">
+            </div>
+        </div>
+        <div class="imgBox">
+            <div class="swiper">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide"></div>
+                        <div class="swiper-slide"></div>
+                        <div class="swiper-slide"></div>
+                        <div class="swiper-slide"></div>
+                    </div>
+
+                    <div class="swiper-pagination"></div>
+                
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-button-next"></div>
+              </div>
+        </div>
+        <div class="actionBtns">
+            <div class="left">
+                <img src="img/heart.png" alt="heart" class="heart" onclick="likeButton()">
+                <img src="img/comment.png" alt="comments">
+                <img src="img/share.png" alt="share">
+            </div>
+            <div class="right">
+                <img src="img/bookmark.png">
+            </div>
+        </div>
+        <h4 class="likes">
+            1.524.165 likes
+        </h4>
+        <div class="description">
+            <b>lucasjgomez</b> A couple of photos I took on my last trip around the world, don't ask <span>#ThankYouJavaScript</span>
+        </div>
+        <div class="addComment">
+            <ul id="comment-list">
+
+            </ul>
+        </div>
+        <div class="input">
+                <input type="text" class="text" id="comment" placeholder="Add a comment..."></textarea>
+                <button type="submit" class="btn" onclick="comment()">Post</button>
+            </div>
+    </div>
+
+    <!-- Script for carrousel -->
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+    <script>
+        let url ="https://picsum.photos/v2/list?page=2&limit=4"
+
+        function featchData(){
+            fetch(url)
+            .then(data=>data.json())
+            .then(data=>showData(data))
+            .catch(error=>console.log(error))
+        
+            function showData(data){
+                let swipersData = ""
+                for(let i=0 ; i<data.length  ; i++){
+                    swipersData += `<div class="swiper-slide"><img src="${data[i].download_url}" class="sliderImg"></div>`
+                }
+
+                document.querySelector(".swiper-wrapper").innerHTML = swipersData
+
+            }
+        }
+        featchData()
+
+        const swiper = new Swiper('.swiper', {
+        pagination: {
+            el: '.swiper-pagination',
+        },
+
+        // Navigation arrows
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+
+        });
+
+    </script>
+    
+    <script>
+        function likeButton(){
+            let heart = document.querySelector(".heart")
+            let likes = document.querySelector(".likes")
+            if(heart.src.match("img/heart.png")){
+                heart.src = "img/heart_red.png"
+                likes.innerHTML = "1.524.166 likes"
+            }else{
+                heart.src = "img/heart.png"
+                likes.innerHTML = "1.524.165 likes"
+            }
+        }
+
+
+        const button = document.querySelector("#button");
+        const commentList = document.querySelector("#comment-list");
+
+        function comment(){
+            let comment = document.getElementById("comment").value;
+            let storage = localStorage.getItem("New Comments")
+
+            if(comment){
+                if (storage == null) {
+                    listArr = [];
+                } else {
+                listArr = JSON.parse(storage);
+                }
+    
+                let name = "ElonMusk"
+    
+                listArr.push(
+                `<b class="nameC"> ${name} </b>` +
+                comment
+                );
+                localStorage.setItem("New Comments", JSON.stringify(listArr));
+                
+                showComments()
+                document.getElementById("comment").value = ""
+            }
+        }
+
+        function showComments() {
+            let storage = localStorage.getItem("New Comments");
+
+            if (storage == null) {
+                listArr = []; 
+            } else {
+                listArr = JSON.parse(storage); 
+            }
+            let liTag = "";
+            listArr.forEach((element, index) => {
+                liTag += `<li> ${element} </li>`;
+            });
+            commentList.innerHTML = liTag;
+        }
+        showComments()
+    </script>
+</body>
+</html>
